@@ -1,11 +1,12 @@
 import express from "express";
 import mongoose from "mongoose";
+import dotenv from "dotenv";
 const app = express();
-
+dotenv.config();
 mongoose
-  .connect("mongodb://127.0.0.1:27017/mern-realstate")
+  .connect(process.env.MONGO_URL)
   .then(() => console.log("db connected"))
   .catch((e) => console.log("error", e.message));
 
-const PORT = 8000;
+const PORT = process.env.PORT;
 app.listen(PORT, () => console.log(`server is running on ${PORT}`));
