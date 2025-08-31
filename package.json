@@ -1,0 +1,28 @@
+{
+  "name": "mern-r-estate",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/hamzanazir27/real-state-frontend#readme",
+  "bugs": {
+    "url": "https://github.com/hamzanazir27/real-state-frontend/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hamzanazir27/real-state-frontend.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server/index.js",
+    "dev": "nodemon server/index.js"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
