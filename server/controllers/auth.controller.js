@@ -1,7 +1,8 @@
 import bcryptjs from "bcryptjs";
 import User from "../models/user.model.js";
+import { errorHandler } from "../utils/errors.js";
 
-async function signup(req, res) {
+async function signup(req, res, next) {
   const { username, email, password } = req.body;
 
   try {
@@ -17,8 +18,7 @@ async function signup(req, res) {
 
     res.status(201).json({ message: "User created successfully" });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "User not created", error: error.message });
+    next(errorHandler(550, "Error Gernated throw"));
   }
 }
 
