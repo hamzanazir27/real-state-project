@@ -18,7 +18,18 @@ async function signup(req, res, next) {
 
     res.status(201).json({ message: "User created successfully" });
   } catch (error) {
-    next(errorHandler(550, "Error Gernated throw"));
+    if (error.code === 11000) {
+      const keys = Object.keys(error.keyPattern);
+      if (keys.includes("email") && keys.includes("username")) {
+        return next(errorHandler(409, "Username and email already exist"));
+      } else if (keys.includes("email")) {
+        return next(errorHandler(409, "Email already exists"));
+      } else if (keys.includes("username")) {
+        return next(errorHandler(409, "Username already exists"));
+      }
+    }
+
+    next(error); // for any other error
   }
 }
 
