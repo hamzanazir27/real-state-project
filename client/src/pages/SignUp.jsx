@@ -33,7 +33,7 @@ function SignUp() {
     const data = await res.json();
 
     console.log(data);
-    if (data.success && !data.success) {
+    if (data.success == false) {
       setErrorMessage(data.message);
       setIsLoading(false);
       setError(true);
