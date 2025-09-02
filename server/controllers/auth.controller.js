@@ -44,7 +44,6 @@ async function signin(req, res, next) {
     const validPassword = bcryptjs.compareSync(password, validUser.password);
     if (!validPassword) next(errorHandler(404, "Invalid Craditial"));
     const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
-    console.log();
     const { password: hashedPassword, ...userData } = validUser._doc;
     res
       .cookie("acess-token", token, { httpOnly: true })
