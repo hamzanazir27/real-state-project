@@ -1,15 +1,21 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+import { useSelector, useDispatch } from "react-redux";
+import {
+  signInStart,
+  signInSucess,
+  signInFalure,
+} from "../redux/user/userSlice";
+
 function SignIn() {
+  const { error, loading } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-  const [error, setError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-
-  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -18,8 +24,8 @@ function SignIn() {
   }
 
   async function handleSubmit(e) {
-    e.preventDefault(); // page reload prevent
-    setIsLoading(true);
+    e.preventDefault();
+    dispatch(signInStart());
 
     const res = await fetch("/api/auth/signin", {
       method: "POST",
@@ -32,12 +38,9 @@ function SignIn() {
     const data = await res.json();
 
     if (data.success == false) {
-      setErrorMessage(data.message);
-      setIsLoading(false);
-      setError(true);
+      dispatch(signInFalure(data.message));
     } else {
-      setIsLoading(false);
-      setError(false);
+      dispatch(signInSucess(data));
       setFormData({
         email: "",
         password: "",
@@ -51,7 +54,7 @@ function SignIn() {
       <h1 className="text-center text-3xl font-semibold my-7 ">Sign In</h1>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input
-          disabled={isLoading}
+          disabled={loading}
           required
           className="border p-3 rounded-lg bg-white"
           type="email"
@@ -60,7 +63,7 @@ function SignIn() {
           onChange={handleInput}
         />
         <input
-          disabled={isLoading}
+          disabled={loading}
           required
           className="border p-3 rounded-lg bg-white"
           type="password"
@@ -70,15 +73,15 @@ function SignIn() {
         />
         {error && (
           <div>
-            <span className="text-red-500 p-2">{errorMessage}</span>
+            <span className="text-red-500 p-2">{error}</span>
           </div>
         )}
 
         <button
-          disabled={isLoading}
+          disabled={loading}
           className="bg-slate-700 uppercase text-white p-3 rounded-lg hover:opacity-95 disabled:opecity-30"
         >
-          {isLoading ? "loading..." : "sign in"}
+          {loading ? "loading..." : "sign in"}
         </button>
 
         <div className="flex gap-2 mt-3">
