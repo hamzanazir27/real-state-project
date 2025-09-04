@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import OAth from "../components/OAth";
 
 function SignUp() {
   const [formData, setFormData] = useState({
@@ -92,6 +93,7 @@ function SignUp() {
         >
           {isLoading ? "loading..." : "sign up"}
         </button>
+        <OAth />
 
         <div className="flex gap-2 mt-3">
           <p>Have not account?</p>
