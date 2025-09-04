@@ -7,6 +7,7 @@ import {
   signInSucess,
   signInFalure,
 } from "../redux/user/userSlice";
+import OAth from "../components/OAth";
 
 function SignIn() {
   const { error, loading } = useSelector((state) => state.user);
@@ -83,6 +84,7 @@ function SignIn() {
         >
           {loading ? "loading..." : "sign in"}
         </button>
+        <OAth />
 
         <div className="flex gap-2 mt-3">
           <p>Don't not account?</p>
