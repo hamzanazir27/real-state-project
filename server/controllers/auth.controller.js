@@ -46,7 +46,7 @@ async function signin(req, res, next) {
     const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
     const { password: hashedPassword, ...userData } = validUser._doc;
     res
-      .cookie("acess-token", token, { httpOnly: true })
+      .cookie("access_token", token, { httpOnly: true })
       .status(200)
       .json(userData);
   } catch (error) {
@@ -62,7 +62,7 @@ async function googleAuth(req, res, next) {
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
     const { password: hashedPassword, ...userData } = user._doc;
     res
-      .cookie("acess-token", token, { httpOnly: true })
+      .cookie("access_token", token, { httpOnly: true })
       .status(200)
       .json(userData);
   } else {
@@ -84,7 +84,7 @@ async function googleAuth(req, res, next) {
       const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
       const { password: pass, ...userData } = newUser._doc;
       res
-        .cookie("acess-token", token, { httpOnly: true })
+        .cookie("access_token", token, { httpOnly: true })
         .status(200)
         .json(userData);
     } catch (error) {
