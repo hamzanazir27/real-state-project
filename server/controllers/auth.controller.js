@@ -9,7 +9,6 @@ async function signup(req, res, next) {
 
   try {
     const hashedPassword = bcryptjs.hashSync(password, 10);
-
     const user = new User({
       username,
       email,
@@ -57,7 +56,7 @@ async function signin(req, res, next) {
 async function googleAuth(req, res, next) {
   const { name, email, photo } = req.body;
   const user = await User.findOne({ email });
-  console.log(req.body);
+  // console.log(req.body);
   if (user) {
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
     const { password: hashedPassword, ...userData } = user._doc;
@@ -92,5 +91,20 @@ async function googleAuth(req, res, next) {
     }
   }
 }
+async function signout(req, res, next) {
+  console.log("request received signout");
+  try {
+    // Clear the access_token cookie
+    res.clearCookie("access_token", {
+      httpOnly: true, // matches how you set the cookie
+      secure: process.env.NODE_ENV === "production", // only in HTTPS for prod
+      sameSite: "strict",
+    });
 
-export default { signup, signin, googleAuth };
+    res.status(200).json({ success: true, message: "Signed out successfully" });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export default { signup, signin, googleAuth, signout };

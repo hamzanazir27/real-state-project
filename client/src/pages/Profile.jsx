@@ -7,6 +7,9 @@ import {
   deleteStart,
   userDeleteFailure,
   userDeleteSuccess,
+  signoutStart,
+  userSigoutFailure,
+  userSigoutSucess,
 } from "../redux/user/userSlice";
 import { useNavigate } from "react-router-dom";
 
@@ -201,8 +204,13 @@ function Profile() {
         if (!res.ok || data.success === false) {
           dispatch(userDeleteFailure(data.message || "delete failed"));
         } else {
-          dispatch(userDeleteSuccess());
-          navigate("/signup");
+          const initialState = {
+            currentUser: null,
+            error: null,
+            loading: false,
+          };
+          dispatch(userSigoutSucess(initialState));
+          navigate("/signin");
         }
       } catch (error) {
         dispatch(userDeleteFailure("Network error. Please try again."));
@@ -210,9 +218,33 @@ function Profile() {
     }
   };
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     if (window.confirm("Are you sure you want to sign out?")) {
-      // Implement sign out logic here
+      dispatch(signoutStart());
+      //
+      try {
+        const res = await fetch(`/api/auth/signout`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const data = await res.json();
+        if (!res.ok || data.success === false) {
+          dispatch(userSigoutFailure(data.message || "sign out failed"));
+        } else {
+          const initialState = {
+            currentUser: null,
+            error: null,
+            loading: false,
+          };
+          dispatch(userSigoutSucess(initialState));
+          navigate("/signin");
+          console.log("signout");
+        }
+      } catch (error) {
+        dispatch(userSigoutFailure("network error"));
+      }
     }
   };
 
