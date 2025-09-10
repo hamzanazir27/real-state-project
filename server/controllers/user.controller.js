@@ -40,7 +40,13 @@ async function deleteUser(req, res, next) {
   if (req.user.id !== req.params.id)
     return next(errorHandler(401, "You can only delete your own account!"));
   try {
-    User.findByIdAndDelete(req.params.id);
+    await User.findByIdAndDelete(req.params.id);
+    res.clearCookie("access_token", {
+      httpOnly: true, // matches how you set the cookie
+      secure: process.env.NODE_ENV === "production", // only in HTTPS for prod
+      sameSite: "strict",
+    });
+
     res.status(200).json("user deleted sucessfully");
   } catch (error) {
     next(error);
