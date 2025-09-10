@@ -2,7 +2,8 @@ import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import userRoutes from "./routes/user.route.js";
-import authRoutes from "./routes/auth.route.js"; // extension add .js is mendatory
+import authRoutes from "./routes/auth.route.js"; // extension add .js is mendatory ye meri galti hoti hai akser
+import listingRoute from "./routes/listing.route.js"; // extension add .js is mendatory
 import cookieParser from "cookie-parser";
 
 const app = express();
@@ -18,6 +19,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/listing", listingRoute);
 
 //middleware
 // jb api endpoints next call kjrey gi tu idher aye gi
