@@ -4,10 +4,15 @@ import {
   updateStart,
   userUpdateSuccess,
   userUpdateFailure,
+  deleteStart,
+  userDeleteFailure,
+  userDeleteSuccess,
 } from "../redux/user/userSlice";
+import { useNavigate } from "react-router-dom";
 
 function Profile() {
   const fileRef = useRef();
+  const navigate = useNavigate();
   const { currentUser, error, loading } = useSelector((state) => state.user);
   const [isSuccess, setSuccess] = useState(false);
 
@@ -176,13 +181,32 @@ function Profile() {
     }
   };
 
-  const handleDeleteAccount = () => {
+  const handleDeleteAccount = async () => {
     if (
       window.confirm(
         "Are you sure you want to delete your account? This action cannot be undone."
       )
     ) {
       // Implement delete account logic here
+      dispatch(deleteStart());
+      try {
+        const res = await fetch(`/api/users/delete/${currentUser._id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const data = await res.json();
+
+        if (!res.ok || data.success === false) {
+          dispatch(userDeleteFailure(data.message || "delete failed"));
+        } else {
+          dispatch(userDeleteSuccess());
+          navigate("/signup");
+        }
+      } catch (error) {
+        dispatch(userDeleteFailure("Network error. Please try again."));
+      }
     }
   };
 
