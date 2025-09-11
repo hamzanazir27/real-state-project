@@ -11,7 +11,7 @@ import {
   userSigoutFailure,
   userSigoutSucess,
 } from "../redux/user/userSlice";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Profile() {
   const fileRef = useRef();
@@ -361,6 +361,14 @@ function Profile() {
             ? "Uploading..."
             : "Update Profile"}
         </button>
+
+        <Link
+          to="/createlisting"
+          className="bg-green-700 text-white uppercase p-3 text-center rounded-lg hover:opacity-95 disabled:cursor-not-allowed 
+           "
+        >
+          Create Listing
+        </Link>
       </div>
 
       {/* Delete Account and Sign Out */}
