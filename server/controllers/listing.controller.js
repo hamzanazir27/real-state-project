@@ -53,3 +53,19 @@ export const updateListing = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getListing = async (req, res, next) => {
+  // req.on('aborted', () => {
+  //   console.log('Request was aborted by the client');
+  // });
+
+  try {
+    const listing = await Listing.findById(req.params.id);
+    if (!listing) {
+      return next(404, "listing not found");
+    }
+    res.json(listing);
+  } catch (err) {
+    next(err);
+  }
+};

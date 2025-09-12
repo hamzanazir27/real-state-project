@@ -476,9 +476,12 @@ function Profile() {
                   >
                     delete
                   </button>
-                  <button className="text-green-700 hover:underline uppercase">
+                  <Link
+                    to={`/updatelisting/${listing._id}`}
+                    className="text-green-700 hover:underline uppercase"
+                  >
                     edit
-                  </button>
+                  </Link>
                 </div>
               </div>
             );
