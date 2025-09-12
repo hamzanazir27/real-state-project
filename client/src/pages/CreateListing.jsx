@@ -27,7 +27,7 @@ function CreateListing() {
     imageUrls: [],
   });
 
-  console.log(formData);
+  //   console.log(formData);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
@@ -121,10 +121,7 @@ function CreateListing() {
         ...formData,
         type: e.target.id,
       });
-    }
-
-    // Handle boolean checkboxes (parking, furnished, offer)
-    else if (
+    } else if (
       e.target.id === "parking" ||
       e.target.id === "furnished" ||
       e.target.id === "offer"
@@ -133,10 +130,7 @@ function CreateListing() {
         ...formData,
         [e.target.id]: e.target.checked,
       });
-    }
-
-    // Handle text, textarea, and number inputs
-    else if (
+    } else if (
       e.target.type === "number" ||
       e.target.type === "text" ||
       e.target.type === "textarea"
