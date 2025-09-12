@@ -24,7 +24,8 @@ function Profile() {
   const [fileUploadError, setFileUploadError] = useState("");
   const [formData, setFormData] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const [listingError, setListingError] = useState(false);
+  const [allListing, setAllLising] = useState([]);
   const dispatch = useDispatch();
 
   const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
@@ -248,6 +249,46 @@ function Profile() {
     }
   };
 
+  const handleShowListing = async () => {
+    // allListing,setAllLising
+    try {
+      setListingError(false);
+
+      const res = await fetch(`/api/users/listing/${currentUser._id}`);
+      const data = await res.json();
+      if (!res.ok || data.success === false) {
+        setListingError(true);
+        setAllLising([]);
+      } else {
+        // console.log(data);
+        setAllLising(data);
+      }
+    } catch (error) {
+      setListingError(true);
+      setAllLising([]);
+    }
+  };
+
+  const handleDeleteListing = async (id) => {
+    try {
+      const res = await fetch(`/api/listing/delete/${id}`, {
+        method: "DELETE",
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || data.success === false) {
+        console.log("Error occurred during delete listing");
+        return;
+      }
+
+      // console.log("Listing deleted successfully");
+      setAllLising((prev) => prev.filter((item) => item._id !== id));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className="mx-auto p-3 max-w-lg">
       <h1 className="text-3xl text-center font-semibold my-7">Profile</h1>
@@ -393,6 +434,57 @@ function Profile() {
           Supported: JPG, PNG, GIF, WEBP • Max size: 10MB
         </p>
       </div>
+      <button
+        onClick={handleShowListing}
+        className="text-green-700 text-center  w-full my-4 hover:underline"
+      >
+        Show Listing
+      </button>
+
+      {listingError && (
+        <span className=" text-red-700 mt-5">Errors Showing Listing </span>
+      )}
+
+      {allListing && allListing.length > 0 && (
+        <div className="flex flex-col gap-4">
+          <h1 className="font-semibold text-2xl text-center my-5">
+            Your Listing
+          </h1>
+
+          {allListing.map((listing) => {
+            return (
+              <div
+                key={listing._id}
+                className="flex justify-between items-center w-full bg-gray-50 rounded-md p-4"
+              >
+                <Link to={`/listing/${listing._id}`}>
+                  <img
+                    src={listing.imageUrls[0]}
+                    className="w-16 h-16 object-contain"
+                  />
+                </Link>
+                <Link to={`/listing/${listing._id}`}>
+                  <h3 className="text-slate-700 font-semibold hover:underline truncate">
+                    {listing.name}
+                  </h3>
+                </Link>
+
+                <div className="flex flex-col gap-2">
+                  <button
+                    onClick={() => handleDeleteListing(listing._id)}
+                    className="text-red-700 hover:underline uppercase"
+                  >
+                    delete
+                  </button>
+                  <button className="text-green-700 hover:underline uppercase">
+                    edit
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
