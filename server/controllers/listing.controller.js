@@ -69,3 +69,53 @@ export const getListing = async (req, res, next) => {
     next(err);
   }
 };
+export const getListings = async (req, res, next) => {
+  console.log("----+----");
+  try {
+    // 1. Parse query parameters with defaults
+    const limit = parseInt(req.query.limit) || 9;
+    const startIndex = parseInt(req.query.startIndex) || 0;
+    const searchTerm = req.query.searchTerm || ""; // <--- add this
+    const sort = req.query.sort || "createdAt";
+    const order = req.query.order === "asc" ? 1 : -1;
+
+    // 2. Handle boolean filters
+    const offer =
+      req.query.offer === undefined || req.query.offer === "false"
+        ? { $in: [false, true] }
+        : true;
+
+    const furnished =
+      req.query.furnished === undefined || req.query.furnished === "false"
+        ? { $in: [false, true] }
+        : true;
+
+    const parking =
+      req.query.parking === undefined || req.query.parking === "false"
+        ? { $in: [false, true] }
+        : true;
+
+    // 3. Type filter
+    const type =
+      req.query.type === "all" || req.query.type === undefined
+        ? { $in: ["rent", "sale"] }
+        : req.query.type;
+
+    // 4. MongoDB Query
+    const listings = await Listing.find({
+      name: { $regex: searchTerm, $options: "i" },
+      offer,
+      furnished,
+      parking,
+      type,
+    })
+      .sort({ [sort]: order })
+      .limit(limit)
+      .skip(startIndex);
+
+    // 5. Response
+    res.status(200).json(listings);
+  } catch (error) {
+    next(error);
+  }
+};

@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config();
 async function signup(req, res, next) {
+  // console.log("request received signup", req.body);
   const { username, email, password } = req.body;
 
   try {
@@ -92,7 +93,7 @@ async function googleAuth(req, res, next) {
   }
 }
 async function signout(req, res, next) {
-  console.log("request received signout");
+  // console.log("request received signout");
   try {
     // Clear the access_token cookie
     res.clearCookie("access_token", {
