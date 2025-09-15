@@ -19,4 +19,5 @@ client/build/
 
 # Logs
 *.log
-npm-debug.log*
+npm-debug.log*.env
+client/.env

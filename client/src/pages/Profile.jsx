@@ -18,6 +18,7 @@ function Profile() {
   const navigate = useNavigate();
   const { currentUser, error, loading } = useSelector((state) => state.user);
   const [isSuccess, setSuccess] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
   const [file, setFile] = useState(null);
   const [filePercentage, setFilePercentage] = useState(0);
@@ -32,6 +33,10 @@ function Profile() {
   const CLOUDINARY_UPLOAD_PRESET = import.meta.env
     .VITE_CLOUDINARY_UPLOAD_PRESET;
   const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
+
+  // Create a fallback avatar using data URL (always works offline)
+  const fallbackAvatar =
+    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 96 96'%3E%3Crect width='96' height='96' fill='%23cccccc'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23ffffff' font-family='Arial' font-size='14'%3EAvatar%3C/text%3E%3C/svg%3E";
 
   // Trigger upload when file is selected
   useEffect(() => {
@@ -49,6 +54,11 @@ function Profile() {
       return () => clearTimeout(timer);
     }
   }, [isSuccess]);
+
+  // Reset image error when formData.avatar or currentUser.avatar changes
+  useEffect(() => {
+    setImageError(false);
+  }, [formData.avatar, currentUser.avatar]);
 
   const handleFileUpload = async (file) => {
     setFileUploadError("");
@@ -191,7 +201,6 @@ function Profile() {
         "Are you sure you want to delete your account? This action cannot be undone."
       )
     ) {
-      // Implement delete account logic here
       dispatch(deleteStart());
       try {
         const res = await fetch(`/api/users/delete/${currentUser._id}`, {
@@ -222,7 +231,6 @@ function Profile() {
   const handleSignOut = async () => {
     if (window.confirm("Are you sure you want to sign out?")) {
       dispatch(signoutStart());
-      //
       try {
         const res = await fetch(`/api/auth/signout`, {
           method: "POST",
@@ -250,7 +258,6 @@ function Profile() {
   };
 
   const handleShowListing = async () => {
-    // allListing,setAllLising
     try {
       setListingError(false);
 
@@ -260,7 +267,6 @@ function Profile() {
         setListingError(true);
         setAllLising([]);
       } else {
-        // console.log(data);
         setAllLising(data);
       }
     } catch (error) {
@@ -282,11 +288,24 @@ function Profile() {
         return;
       }
 
-      // console.log("Listing deleted successfully");
       setAllLising((prev) => prev.filter((item) => item._id !== id));
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const handleImageError = () => {
+    if (!imageError) {
+      setImageError(true);
+    }
+  };
+
+  // Determine which image source to use
+  const getImageSource = () => {
+    if (imageError) {
+      return fallbackAvatar;
+    }
+    return formData.avatar || currentUser.avatar || fallbackAvatar;
   };
 
   return (
@@ -308,12 +327,9 @@ function Profile() {
           <img
             onClick={() => fileRef.current.click()}
             className="w-24 h-24 rounded-full mt-2 cursor-pointer object-cover hover:opacity-80 transition-opacity border-4 border-gray-200"
-            src={formData.avatar || currentUser.avatar}
+            src={getImageSource()}
             alt="profile"
-            onError={(e) => {
-              e.target.src =
-                "https://via.placeholder.com/96/cccccc/ffffff?text=Avatar";
-            }}
+            onError={handleImageError}
           />
           {filePercentage > 0 && filePercentage < 100 && (
             <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full">
@@ -405,8 +421,7 @@ function Profile() {
 
         <Link
           to="/createlisting"
-          className="bg-green-700 text-white uppercase p-3 text-center rounded-lg hover:opacity-95 disabled:cursor-not-allowed 
-           "
+          className="bg-green-700 text-white uppercase p-3 text-center rounded-lg hover:opacity-95 disabled:cursor-not-allowed"
         >
           Create Listing
         </Link>
@@ -434,21 +449,22 @@ function Profile() {
           Supported: JPG, PNG, GIF, WEBP • Max size: 10MB
         </p>
       </div>
+
       <button
         onClick={handleShowListing}
-        className="text-green-700 text-center  w-full my-4 hover:underline"
+        className="text-green-700 text-center w-full my-4 hover:underline"
       >
         Show Listing
       </button>
 
       {listingError && (
-        <span className=" text-red-700 mt-5">Errors Showing Listing </span>
+        <span className="text-red-700 mt-5">Error showing listings</span>
       )}
 
       {allListing && allListing.length > 0 && (
         <div className="flex flex-col gap-4">
           <h1 className="font-semibold text-2xl text-center my-5">
-            Your Listing
+            Your Listings
           </h1>
 
           {allListing.map((listing) => {
@@ -461,6 +477,10 @@ function Profile() {
                   <img
                     src={listing.imageUrls[0]}
                     className="w-16 h-16 object-contain"
+                    alt={listing.name}
+                    onError={(e) => {
+                      e.target.src = fallbackAvatar;
+                    }}
                   />
                 </Link>
                 <Link to={`/listing/${listing._id}`}>
