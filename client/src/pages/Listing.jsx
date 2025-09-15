@@ -9,13 +9,18 @@ import {
   FaChair,
   FaShare,
   FaLocationArrow,
-  FaSearchLocation,
 } from "react-icons/fa";
 
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import Contact from "../components/Contact";
+import { useSelector } from "react-redux";
 
 function Listing() {
+  const [contact, setContact] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const { currentUser } = useSelector((state) => state.user);
+
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -69,20 +74,51 @@ function Listing() {
     };
   }, [params.listingId]);
 
-  // Loading state
+  // Handle share functionality with better UX
+  const handleShare = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000); // Reset after 2 seconds
+    } catch (err) {
+      console.error("Failed to copy: ", err);
+      // Fallback for older browsers
+      const textArea = document.createElement("textarea");
+      textArea.value = window.location.href;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  // Loading state with spinner
   if (loading) {
     return (
       <main className="flex justify-center items-center min-h-screen">
-        <p className="text-2xl">Loading...</p>
+        <div className="flex flex-col items-center gap-4">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-slate-700"></div>
+          <p className="text-xl text-slate-600">Loading listing...</p>
+        </div>
       </main>
     );
   }
 
-  // Error state
+  // Error state with retry option
   if (error) {
     return (
       <main className="flex justify-center items-center min-h-screen">
-        <p className="text-2xl text-red-600">Something went wrong!</p>
+        <div className="text-center">
+          <p className="text-2xl text-red-600 mb-4">Something went wrong!</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="bg-slate-700 text-white px-6 py-2 rounded hover:opacity-95"
+          >
+            Try Again
+          </button>
+        </div>
       </main>
     );
   }
@@ -91,13 +127,14 @@ function Listing() {
   if (!listing) {
     return (
       <main className="flex justify-center items-center min-h-screen">
-        <p className="text-2xl">No listing found</p>
+        <p className="text-2xl text-slate-600">No listing found</p>
       </main>
     );
   }
 
   return (
     <main>
+      {/* Image Gallery */}
       {listing.imageUrls && listing.imageUrls.length > 0 ? (
         <Swiper
           modules={[Navigation]}
@@ -118,6 +155,10 @@ function Listing() {
                   background: `url(${url}) center no-repeat`,
                   backgroundSize: "cover",
                 }}
+                role="img"
+                aria-label={`Property image ${index + 1} of ${
+                  listing.imageUrls.length
+                }`}
               />
             </SwiperSlide>
           ))}
@@ -128,15 +169,21 @@ function Listing() {
         </div>
       )}
 
-      <div className="fixed top-[13%] right-[3%] z-10 border rounded-full w-12 h-12 flex justify-center items-center bg-slate-100 cursor-pointer">
+      <div className="fixed top-[13%] right-[3%] z-10 border rounded-full w-12 h-12 flex justify-center items-center bg-slate-100 cursor-pointer hover:bg-slate-200 transition-colors">
         <button
-          onClick={() => {
-            navigator.clipboard.writeText(window.location.href);
-            alert("Link copied!");
-          }}
+          onClick={handleShare}
+          title={copied ? "Link copied!" : "Share this listing"}
+          className={`transition-colors ${
+            copied ? "text-green-600" : "text-slate-600"
+          }`}
         >
           <FaShare />
         </button>
+        {copied && (
+          <div className="absolute -bottom-10 right-0 bg-green-600 text-white px-2 py-1 rounded text-xs whitespace-nowrap">
+            Link copied!
+          </div>
+        )}
       </div>
 
       <div className="max-w-4xl mx-auto p-3 my-7">
@@ -155,8 +202,8 @@ function Listing() {
           {listing.address}
         </p>
 
-        <div className="flex gap-4 mt-4">
-          <p className="bg-red-900 text-white text-center py-3 px-6   rounded-md">
+        <div className="flex gap-4 mt-4 flex-wrap">
+          <p className="bg-red-900 text-white text-center py-3 px-6 rounded-md">
             {listing.type === "rent" ? "For Rent" : "For Sale"}
           </p>
           {listing.offer && (
@@ -175,6 +222,7 @@ function Listing() {
           {listing.description}
         </p>
 
+        {/* Property Features */}
         <ul className="text-green-900 font-semibold text-sm flex flex-wrap items-center gap-4 sm:gap-6 mt-4">
           <li className="flex items-center gap-1 whitespace-nowrap">
             <FaBed className="text-lg" />
@@ -197,6 +245,42 @@ function Listing() {
             </li>
           )}
         </ul>
+
+        <div className="max-w-3xl mt-8">
+          {currentUser._id &&
+            listing &&
+            listing.userRef !== currentUser._id &&
+            !contact && (
+              <button
+                onClick={() => setContact(true)}
+                className="bg-slate-700 text-white w-full text-center   rounded uppercase hover:opacity-95 p-3  transition-opacity "
+              >
+                Contact Landlord
+              </button>
+            )}
+
+          {!currentUser._id && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <p className="text-blue-800">
+                Please{" "}
+                <Link to="/signin" className="underline font-semibold">
+                  sign in
+                </Link>{" "}
+                to contact the landlord.
+              </p>
+            </div>
+          )}
+
+          {currentUser && listing && listing.userRef === currentUser._id && (
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+              <p className="text-green-800 font-semibold">
+                This is your listing
+              </p>
+            </div>
+          )}
+
+          {contact && <Contact listing={listing} />}
+        </div>
       </div>
     </main>
   );

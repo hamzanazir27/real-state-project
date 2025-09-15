@@ -64,5 +64,19 @@ async function getUserListing(req, res, next) {
     next(error);
   }
 }
+async function getUser(req, res, next) {
+  try {
+    const user = await User.findById(req.params.id);
 
-export default { test, updateUser, deleteUser, getUserListing };
+    if (!user) {
+      return next(errorHandler(404, "User not found"));
+    }
+
+    const { password: pass, ...rest } = user._doc;
+    res.status(200).json(rest);
+  } catch (error) {
+    next(error);
+  }
+}
+
+export default { test, updateUser, deleteUser, getUserListing, getUser };
