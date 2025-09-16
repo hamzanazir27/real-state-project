@@ -70,7 +70,7 @@ export const getListing = async (req, res, next) => {
   }
 };
 export const getListings = async (req, res, next) => {
-  console.log("----+----");
+  // console.log("----+----");
   try {
     // 1. Parse query parameters with defaults
     const limit = parseInt(req.query.limit) || 9;

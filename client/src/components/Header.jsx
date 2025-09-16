@@ -1,5 +1,5 @@
 import { FaSearch } from "react-icons/fa";
-<<<<<<< HEAD
+
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useState } from "react";
@@ -10,7 +10,6 @@ function Header() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // When user submits search
   const handleSubmit = (e) => {
     e.preventDefault();
     const urlParams = new URLSearchParams(window.location.search);
@@ -18,7 +17,6 @@ function Header() {
     navigate(`/search?${urlParams.toString()}`);
   };
 
-  // When URL changes, update search box
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const searchFromURL = urlParams.get("searchTerm");
@@ -27,12 +25,6 @@ function Header() {
     }
   }, [location.search]);
 
-=======
-import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
-function Header() {
-  const user = useSelector((state) => state.user.currentUser);
->>>>>>> 94168805edda9ef9108ba9836007762ee5f762a3
   return (
     <header className="bg-slate-200 shadow-md">
       <div className="flex justify-between items-center max-w-6xl mx-auto p-3">
