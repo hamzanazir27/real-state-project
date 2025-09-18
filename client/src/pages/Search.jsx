@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import ListingItem from "../components/ListingItem";
 
 export default function Search() {
   const navigate = useNavigate();
@@ -75,7 +76,6 @@ export default function Search() {
     navigate(`/search?${searchQuery}`);
   };
 
-  // Fetch data from URL parameters
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const searchTermFromUrl = urlParams.get("searchTerm");
@@ -119,11 +119,11 @@ export default function Search() {
     fetchListings();
   }, [location.search]);
 
-  console.log(listings);
+  // console.log(listings);
 
   return (
     <div className="md:flex md:min-h-screen">
-      <div className="border-b-2 md:border-r-2 md:border-b-0 p-7 md:w-1/3">
+      <div className="border-b-2 md:border-r-2 md:border-b-0 p-7 md:w-1/4">
         <form onSubmit={handleSubmit} className="flex flex-col gap-8">
           <div>
             <label className="font-semibold">Type:</label>
@@ -230,54 +230,12 @@ export default function Search() {
           {loading && <p>Loading...</p>}
           {!loading && listings.length === 0 && <p>No listings found!</p>}
           {!loading && listings.length > 0 && (
-            <div>
-              <p className="text-slate-600 mb-4">
-                Found {listings.length} listings
-              </p>
-              {listings.map((listing, index) => (
-                <div key={index} className="border p-4 mb-4 rounded-lg">
-                  <h3 className="font-semibold">{listing.name}</h3>
-                  <p className="text-slate-600">{listing.description}</p>
-                  {/* Add more listing details as needed */}
-                </div>
+            <div className="flex gap-4 flex-wrap mt-4 ">
+              {listings.map((listing) => (
+                <ListingItem key={listing._id} listing={listing} />
               ))}
             </div>
           )}
-
-          {/* Debug Information  for temprery purpose*/}
-          <div className="text-slate-600 bg-slate-50 p-4 rounded-lg mt-4">
-            <h3 className="font-semibold mb-2">Current Search Parameters:</h3>
-            <div className="space-y-1 text-sm">
-              <div>
-                <span className="font-medium">Search Term:</span>{" "}
-                {sidebarData.searchTerm || "None"}
-              </div>
-              <div>
-                <span className="font-medium">Type:</span> {sidebarData.type}
-              </div>
-              <div>
-                <span className="font-medium">Parking:</span>{" "}
-                {sidebarData.parking ? "Yes" : "No"}
-              </div>
-              <div>
-                <span className="font-medium">Furnished:</span>{" "}
-                {sidebarData.furnished ? "Yes" : "No"}
-              </div>
-              <div>
-                <span className="font-medium">Offer:</span>{" "}
-                {sidebarData.offer ? "Yes" : "No"}
-              </div>
-              <div>
-                <span className="font-medium">Sort:</span> {sidebarData.sort}
-              </div>
-              <div>
-                <span className="font-medium">Order:</span> {sidebarData.order}
-              </div>
-            </div>
-            <div className="mt-3 text-xs text-slate-500">
-              Form data is synced with URL parameters automatically.
-            </div>
-          </div>
         </div>
       </div>
     </div>

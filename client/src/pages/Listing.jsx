@@ -87,7 +87,6 @@ function Listing() {
       textArea.value = window.location.href;
       document.body.appendChild(textArea);
       textArea.select();
-      document.execCommand("copy");
       document.body.removeChild(textArea);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);

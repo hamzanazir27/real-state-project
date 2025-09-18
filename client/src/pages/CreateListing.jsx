@@ -12,8 +12,7 @@ function CreateListing() {
     description: "",
     address: "",
 
-    // Property type (radio-style checkboxes)
-    type: "rent", // Default to rent
+    type: "rent",
 
     parking: false,
     furnished: false,
