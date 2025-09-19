@@ -108,7 +108,7 @@ export default function Search() {
 
     // Fetch listings function
     const fetchListings = async () => {
-      setShowMoreBtn(fasle);
+      setShowMoreBtn(false);
 
       setLoading(true);
       const searchQuery = urlParams.toString();
@@ -116,7 +116,7 @@ export default function Search() {
       const data = await response.json();
       setListings(data);
       setLoading(false);
-      if (data.length < 9) setShowMoreBtn(fasle);
+      if (data.length < 9) setShowMoreBtn(false);
       else setShowMoreBtn(true);
     };
 

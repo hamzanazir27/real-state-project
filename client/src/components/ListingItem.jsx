@@ -8,7 +8,7 @@ const ListingItem = ({ listing }) => {
   return (
     <Link
       to={`/listing/${listing._id}`}
-      className="bg-white shadow-md hover:shadow-lg transition-shadow duration-300 rounded-lg overflow-hidden w-full sm:w-[280px]"
+      className="bg-white shadow-md hover:shadow-lg transition-shadow duration-300 rounded-lg overflow-hidden w-full sm:w-[270px]"
     >
       <div className="relative">
         <img

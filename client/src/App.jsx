@@ -1,6 +1,3 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
 import "./App.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
@@ -14,6 +11,7 @@ import CreateListing from "./pages/CreateListing";
 import UpdateListing from "./pages/UpdateListing";
 import Listing from "./pages/Listing";
 import Search from "./pages/Search";
+import Footer from "./components/Footer";
 
 function App() {
   return (
@@ -33,6 +31,7 @@ function App() {
           <Route path="/updatelisting/:listingid" element={<UpdateListing />} />
         </Route>
       </Routes>
+      <Footer />
     </BrowserRouter>
   );
 }
