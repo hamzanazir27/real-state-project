@@ -34,10 +34,8 @@ app.get("*", (req, res) => {
 
 // Connect to MongoDB
 
-console.log("MONGO_URI is", process.env.MONGO_URI ? "set" : "missing");
-
 mongoose
-  .connect(process.env.MONGO_URI)
+  .connect(process.env.MONGO_URL)
   .then(() => {
     console.log("MongoDB connected");
     const PORT = process.env.PORT || 10000;
