@@ -17,7 +17,7 @@ export default function Search() {
   });
   const [loading, setLoading] = useState(false);
   const [listings, setListings] = useState([]);
-
+  const [showMoreBtn, setShowMoreBtn] = useState(true);
   const handleChange = (e) => {
     if (
       e.target.id === "all" ||
@@ -108,18 +108,36 @@ export default function Search() {
 
     // Fetch listings function
     const fetchListings = async () => {
+      setShowMoreBtn(fasle);
+
       setLoading(true);
       const searchQuery = urlParams.toString();
       const response = await fetch(`/api/listing/get?${searchQuery}`);
       const data = await response.json();
       setListings(data);
       setLoading(false);
+      if (data.length < 9) setShowMoreBtn(fasle);
+      else setShowMoreBtn(true);
     };
 
     fetchListings();
   }, [location.search]);
 
   // console.log(listings);
+
+  const handleShowMore = async () => {
+    setShowMoreBtn(false);
+    const startIndex = listings.length;
+    const urlParams = new URLSearchParams(location.search);
+    urlParams.set("startIndex", startIndex);
+    const searchQuery = urlParams.toString();
+
+    const response = await fetch(`/api/listing/get?${searchQuery}`);
+    const data = await response.json();
+    setListings((prev) => [...prev, ...data]);
+    if (data.length < 9) setShowMoreBtn(fasle);
+    else setShowMoreBtn(true);
+  };
 
   return (
     <div className="md:flex md:min-h-screen">
@@ -235,6 +253,15 @@ export default function Search() {
                 <ListingItem key={listing._id} listing={listing} />
               ))}
             </div>
+          )}
+          {showMoreBtn && (
+            <button
+              type="button"
+              onClick={handleShowMore}
+              className="text-center    w-full  p-7 text-green-700 hover:underline"
+            >
+              Show More
+            </button>
           )}
         </div>
       </div>
