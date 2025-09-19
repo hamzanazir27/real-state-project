@@ -6,11 +6,12 @@ function Contact({ listing }) {
   const [message, setMessage] = useState("");
   useEffect(() => {
     const fetchLandlord = async () => {
+      // console.log("listing : ", listing.userRef);
       try {
         const response = await fetch(`/api/users/${listing.userRef}`);
         const data = await response.json();
         setLandlord(data);
-        console.log(data);
+        // console.log("data by card : ", data);
       } catch (error) {
         console.log(error);
       }
@@ -22,6 +23,7 @@ function Contact({ listing }) {
   const onChange = (e) => {
     setMessage(e.target.value);
   };
+  // console.log(landlord);
 
   return (
     <div>

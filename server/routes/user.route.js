@@ -11,7 +11,6 @@ router.get("/test", test);
 router.patch("/update/:id", verifyToken, updateUser);
 router.delete("/delete/:id", verifyToken, deleteUser);
 router.get("/listing/:id", verifyToken, getUserListing);
-
-router.get("/:id", verifyToken, getUser);
+router.get("/:id", getUser);
 
 export default router;

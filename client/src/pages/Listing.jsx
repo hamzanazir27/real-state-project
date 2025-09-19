@@ -52,7 +52,7 @@ function Listing() {
 
         setListing(data);
         setError(false);
-        console.log(data);
+        // console.log(data);
       } catch (err) {
         if (err.name !== "AbortError") {
           console.error(err.message);
@@ -65,7 +65,7 @@ function Listing() {
 
     // Make sure we have the listing ID before making the request
     if (params.listingId) {
-      console.log("Fetching listing with ID:", params.listingId);
+      // console.log("Fetching listing with ID:", params.listingId);
       getListing(params.listingId);
     }
 

@@ -179,8 +179,9 @@ function CreateListing() {
       if (data.success === false) {
         setError(data.message);
       } else {
+        // console.log("CHECK DATA", data);
         // Success - navigate to the created listing
-        navigate(`/listing/${data._id}`);
+        navigate(`/listing/${data.listing._id}`);
       }
     } catch (error) {
       setError(error.message);

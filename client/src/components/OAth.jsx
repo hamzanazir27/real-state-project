@@ -1,9 +1,4 @@
-import {
-  EmailAuthCredential,
-  GoogleAuthProvider,
-  getAuth,
-  signInWithPopup,
-} from "firebase/auth";
+import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
 import { app } from "../firebase.js";
 import { useDispatch } from "react-redux";
 import { signInSucess } from "../redux/user/userSlice";
@@ -18,25 +13,25 @@ function OAth() {
       const provider = new GoogleAuthProvider();
       const auth = getAuth(app);
       const result = await signInWithPopup(auth, provider);
+
+      // ✅ Get Firebase ID token
+      const token = await result.user.getIdToken();
+
+      // ✅ Send token to backend
       const res = await fetch("/api/auth/google", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // secure way
         },
-        body: JSON.stringify({
-          name: result.user.displayName,
-          email: result.user.email,
-          photo: result.user.photoURL,
-        }),
       });
 
       const data = await res.json();
 
       dispatch(signInSucess(data));
-
       navigate("/");
     } catch (e) {
-      console.log(`Error Happen While continue with google ${e}`);
+      console.error("Google Sign-in Error:", e.message || e);
     }
   }
 
@@ -44,8 +39,7 @@ function OAth() {
     <button
       type="button"
       onClick={handleGoogleClick}
-      className="bg-red-700  text-white p-3 rounded-lg uppercase hover:opacity-90
-    "
+      className="bg-red-700 text-white p-3 rounded-lg uppercase hover:opacity-90"
     >
       Continue With Google
     </button>
