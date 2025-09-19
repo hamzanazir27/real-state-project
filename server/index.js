@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import userRoutes from "./routes/user.route.js";
 import authRoutes from "./routes/auth.route.js";
-import listingRoute from "./routes/listing.route.js";
+import listingRoutes from "./routes/listing.route.js";
 import cookieParser from "cookie-parser";
 import { fileURLToPath } from "url";
 import path from "path";
@@ -12,44 +12,32 @@ import path from "path";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const app = express();
 dotenv.config();
 
-// Connect to MongoDB
-mongoose
-  .connect(process.env.MONGO_URL)
-  .then(() => console.log(" DB connected"))
-  .catch((e) => console.log(" DB error:", e.message));
+const app = express();
 
-// Middleware
+// Middlewares
 app.use(express.json());
 app.use(cookieParser());
 
 // API Routes
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
-app.use("/api/listing", listingRoute);
+app.use("/api/listings", listingRoutes);
 
-// Serve frontend build files
-const clientDistPath = path.join(__dirname, "client", "dist");
-app.use(express.static(clientDistPath));
-
-// Catch-all route to serve index.html for React Router
-app.get("/*", (req, res) => {
-  res.sendFile(path.join(clientDistPath, "index.html"));
+// Serve frontend (for production on Render)
+const clientPath = path.join(__dirname, "../client/dist");
+app.use(express.static(clientPath));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(clientPath, "index.html"));
 });
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  const statusCode = err.statusCode || 500;
-  const message = err.message || "Internal Server Error";
-  return res.status(statusCode).json({
-    success: false,
-    statusCode,
-    message,
-  });
-});
-
-// Start server
-const PORT = process.env.PORT || 8000;
-app.listen(PORT, () => console.log(`🚀 Server is running on port ${PORT}`));
+// Connect to MongoDB
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log("MongoDB connected");
+    const PORT = process.env.PORT || 10000;
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  })
+  .catch((err) => console.error("MongoDB connection error:", err));
