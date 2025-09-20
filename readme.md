@@ -1,6 +1,6 @@
 # Ubanto Real Estate
 
-A modern, full-stack(MEARN) real estate application that allows users to browse, search, and manage property listings. Built with modern web technologies to provide a seamless experience for both property seekers and real estate professionals.
+A modern, full-stack(MERN) real estate application that allows users to browse, search, and manage property listings. Built with modern web technologies to provide a seamless experience for both property seekers and real estate professionals.
 
 ## Live Demo
 
