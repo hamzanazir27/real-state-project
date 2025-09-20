@@ -21,7 +21,8 @@ A modern, full-stack real estate application that allows users to browse, search
 ### Frontend
 
 - React.js
-- **Tailwind Css**
+- Tailwind Css
+- Redux Toolkit
 - JavaScript (ES6+)
 - Responsive Design
 
